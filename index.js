@@ -49,7 +49,7 @@ app.get('/authenticate/:token', async (req, res) => {
          console.log('Try thus!');
         
         // Database Lookup
-        const userQuery = 'SELECT * FROM users WHERE username = $1';
+        const userQuery = 'SELECT * FROM users WHERE username ILIKE $1';
         const result = await pool.query(userQuery, [decodedUsername]);
         const user = result.rows[0];
 
@@ -71,7 +71,7 @@ app.get('/authenticate/:token', async (req, res) => {
         // Response
         const response = {
             full_name: user.full_name,
-            api_token: user.current_token,
+            api_token: token,
             web_token: user.web_token || null,
             dashboard_code: "default_dashboard",
             menu_code: "main_menu",
