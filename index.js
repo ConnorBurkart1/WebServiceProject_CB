@@ -33,15 +33,11 @@ app.get('/authenticate/:token', async (req, res) => {
     }
 
     const decodedUsername = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
-
-    console.log('Decoded User');
-
     
     // Extract Headers
     const platform = req.header('Eleos-Mobile-App-Platform');
     const ipAddress = req.header('x-forwarded-for');
 
-    console.log('Got Headers');
 
 
     try {
@@ -53,7 +49,6 @@ app.get('/authenticate/:token', async (req, res) => {
         const result = await pool.query(userQuery, [decodedUsername]);
         const user = result.rows[0];
 
-        console.log('Looked up');
 
 
         // Decode
@@ -64,8 +59,6 @@ app.get('/authenticate/:token', async (req, res) => {
             console.log(`(GET) Verify failed: User ${decodedUsername} not found in DB.`);
             return res.status(401).send("Unauthorized due to invalid token.");
         }
-
-        console.log('Vaildated');
 
 
         // Response
@@ -154,14 +147,21 @@ app.get('/loads', async (req, res) => {
 
     try {
 
+        const decoded = jwt.decode(token);
+        if (!decoded) {
+            return res.status(401).send("Unauthorized: Invalid Token Format");
+        }
+
+        const decodedUsername = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
         // Identify User
-        const userResult = await pool.query('SELECT id FROM users WHERE current_token = $1', [token]);
+        const userResult = await pool.query('SELECT id FROM users WHERE current_token = $1', [decodedUsername]);
         const user = userResult.rows[0];
         
         // Vaildation
         if (!user) {
-            return res.status(401).send("Unauthorized: Invalid Token");
-        }
+            console.log(`Loads failed: User ${decodedUsername} not found.`);
+            return res.status(401).send("Unauthorized: User not found");        }
 
         // Get Loads
         const loadsResult = await pool.query('SELECT * FROM loads WHERE user_id = $1 ORDER BY sort ASC', [user.id]);
