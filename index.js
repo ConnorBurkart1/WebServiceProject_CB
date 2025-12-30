@@ -180,9 +180,7 @@ app.get('/loads', async (req, res) => {
             special_notes: load.special_notes,
             actions: [],
             fields: [],
-            shipper: {},
             stops: [],
-            consignee: {},
             custom: {}
         }));
 
