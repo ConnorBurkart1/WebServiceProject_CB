@@ -35,7 +35,7 @@ app.get('/authenticate/:token', async (req, res) => {
 
         // Validation
         if (!user) {
-            console.log(`Verify failed for token: ${token}`);
+            console.log(`(GET)Verify failed for token: ${token}`);
             return res.status(401).send("Unauthorized due to invalid token.");
         }
 
@@ -81,6 +81,8 @@ app.post('/authenticate', async (req, res) => {
 
         // Verify User and Password
         if (!user || user.password !== password) {
+            
+            console.log(`(Post) Verify failed for token: ${token}`);
             return res.status(401).send("Unauthorized due to invalid username or password.");
         }
 
