@@ -73,8 +73,8 @@ app.get('/authenticate/:token', async (req, res) => {
             full_name: user.full_name,
             api_token: token,
             web_token: user.web_token || null,
-            dashboard_code: "default_dashboard",
-            menu_code: "main_menu",
+            dashboard_code: user.dashboard_code,
+            menu_code: user.menu_code,
             custom: {
                 "verified_on": platform,
                 "client_ip": ipAddress
@@ -120,7 +120,10 @@ app.post('/authenticate', async (req, res) => {
             full_name: user.full_name,
             api_token: user.current_token,
             username: user.username,
-            web_token: user.web_token || null
+            web_token: user.web_token || null,
+            dashboard_code: user.dashboard_code,
+            menu_code: user.menu_code
+
         };
 
         // If team driver login is true, the 'telematics' object must be included
