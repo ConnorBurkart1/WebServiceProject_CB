@@ -38,7 +38,7 @@ app.get('/authenticate/:token', async (req, res) => {
 
     try {
         // Database Lookup
-        const userQuery = 'SELECT * FROM users WHERE current_token = $1';
+        const userQuery = 'SELECT * FROM users WHERE username = $1';
         const result = await pool.query(userQuery, [decodedUsername]);
         const user = result.rows[0];
 
