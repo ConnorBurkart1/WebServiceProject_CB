@@ -27,20 +27,34 @@ app.get('/authenticate/:token', async (req, res) => {
     // Decode 
     const decoded = jwt.decode(token);
     if (!decoded) {
+       
+        console.log('Invaid Token Format Decode');
         return res.status(401).send("Invalid token format.");
     }
 
     const decodedUsername = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
+    console.log('Decoded User');
+
     
     // Extract Headers
     const platform = req.header('Eleos-Mobile-App-Platform');
     const ipAddress = req.header('x-forwarded-for');
 
+    console.log('Got Headers');
+
+
     try {
+
+         console.log('Try thus!');
+        
         // Database Lookup
         const userQuery = 'SELECT * FROM users WHERE username = $1';
         const result = await pool.query(userQuery, [decodedUsername]);
         const user = result.rows[0];
+
+        console.log('Looked up');
+
 
         // Decode
 
@@ -50,6 +64,9 @@ app.get('/authenticate/:token', async (req, res) => {
             console.log(`(GET) Verify failed: User ${decodedUsername} not found in DB.`);
             return res.status(401).send("Unauthorized due to invalid token.");
         }
+
+        console.log('Vaildated');
+
 
         // Response
         const response = {
