@@ -1,6 +1,7 @@
 require('dotenv').config(); // Load environment variables
 const express = require('express');
 const { Pool } = require('pg');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,16 @@ app.get('/authenticate/:token', async (req, res) => {
 
     // Extract the token
     const { token } = req.params;
+
+    // Decode
+
+    const decoded = jwt.decode(token);
+
+    if (!decoded) {
+        return res.status(401).send("Invalid token format.");
+    }
+
+    const username = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
     
     // Extract Headers
     const platform = req.header('Eleos-Mobile-App-Platform');
@@ -33,11 +44,14 @@ app.get('/authenticate/:token', async (req, res) => {
         const result = await pool.query(userQuery, [token]);
         const user = result.rows[0];
 
+        // Decode
+
+
         // Validation
-        // if (!user) {
-        //     console.log(`(GET)Verify failed for token: ${token}`);
-        //     return res.status(401).send("Unauthorized due to invalid token.");
-        // }
+        if (!user) {
+            console.log(`(GET)Verify failed for token: ${token}`);
+            return res.status(401).send("Unauthorized due to invalid token.");
+        }
 
         // Response
         const response = {
