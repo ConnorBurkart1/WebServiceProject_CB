@@ -34,10 +34,10 @@ app.get('/authenticate/:token', async (req, res) => {
         const user = result.rows[0];
 
         // Validation
-        if (!user) {
-            console.log(`(GET)Verify failed for token: ${token}`);
-            return res.status(401).send("Unauthorized due to invalid token.");
-        }
+        // if (!user) {
+        //     console.log(`(GET)Verify failed for token: ${token}`);
+        //     return res.status(401).send("Unauthorized due to invalid token.");
+        // }
 
         // Response
         const response = {
@@ -80,11 +80,11 @@ app.post('/authenticate', async (req, res) => {
         const user = result.rows[0];
 
         // Verify User and Password
-        // if (!user || user.password !== password) {
+        if (!user || user.password !== password) {
             
-        //     console.log(`(Post) Verify failed for token: ${token}`);
-        //     return res.status(401).send("Unauthorized due to invalid username or password.");
-        // }
+            console.log(`(Post) Verify failed for token: ${token}`);
+            return res.status(401).send("Unauthorized due to invalid username or password.");
+        }
 
         // Response
         const response = {
