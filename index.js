@@ -155,7 +155,7 @@ app.get('/loads', async (req, res) => {
         const decodedUsername = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
 
         // Identify User
-        const userResult = await pool.query('SELECT id FROM users WHERE current_token = $1', [decodedUsername]);
+        const userResult = await pool.query('SELECT id FROM users WHERE username ILIKE $1', [decodedUsername]);
         const user = userResult.rows[0];
         
         // Vaildation
